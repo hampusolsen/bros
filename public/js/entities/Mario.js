@@ -1,5 +1,7 @@
 import Entity from '../Entity.js';
 import Jump from '../traits/Jump.js';
+import Killable from '../traits/Killable.js';
+import Stomp from '../traits/Stomp.js';
 import Walk from '../traits/Walk.js';
 import { loadSpriteSheet } from '../loaders.js';
 
@@ -44,6 +46,10 @@ function createMarioFactory(SpriteSheet) {
 
     Mario.addTrait(new Walk());
     Mario.addTrait(new Jump());
+    Mario.addTrait(new Stomp());
+    Mario.addTrait(new Killable());
+
+    Mario.killable.removeAfter = 0;
 
     Mario.turbo = setTurboState;
     Mario.draw = drawMario;
