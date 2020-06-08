@@ -18,29 +18,11 @@ export default class Level {
       this.tileCollider = new TileCollider(matrix);
    }
 
-   update(deltaTime) {
-      this.entities.forEach(entity => {
-         entity.update(deltaTime, this);
+   update(gameContext) {
+      this.entities.forEach(entity => entity.update(gameContext, this));
+      this.entities.forEach(entity => this.entityCollider.check(entity));
+      this.entities.forEach(entity => entity.finalize());
 
-         entity.pos.x += entity.vel.x * deltaTime;
-         if (entity.canCollide) {
-            this.tileCollider.checkX(entity);
-         }
-
-         entity.pos.y += entity.vel.y * deltaTime;
-         if (entity.canCollide) {
-            this.tileCollider.checkY(entity);
-         }
-
-         entity.vel.y += this.gravity * deltaTime;
-      });
-
-      this.entities.forEach(entity => {
-         if (entity.canCollide) {
-            this.entityCollider.check(entity);
-         }
-      });
-
-      this.totalTime += deltaTime;
+      this.totalTime += gameContext.deltaTime;
    }
 }

@@ -1,19 +1,23 @@
 import Entity from '../Entity.js';
 import Jump from '../traits/Jump.js';
 import Killable from '../traits/Killable.js';
+import Physics from '../traits/Physics.js';
+import Solid from '../traits/Solid.js';
 import Stomp from '../traits/Stomp.js';
 import Walk from '../traits/Walk.js';
 import { loadSpriteSheet } from '../loaders.js';
+import { loadAudioBoard } from '../loaders/audio.js';
 
 const FAST = 1 / 5000;
 const SLOW = 1 / 1500;
 
-export async function loadMario() {
+export async function loadMario(audioContext) {
+  const AudioBoard = await loadAudioBoard('mario', audioContext);
   const SpriteSheet = await loadSpriteSheet('mario');
-  return createMarioFactory(SpriteSheet);
+  return createMarioFactory(SpriteSheet, AudioBoard);
 }
 
-function createMarioFactory(SpriteSheet) {
+function createMarioFactory(SpriteSheet, audioBoard) {
   const runAnimation = SpriteSheet.animations.get('run');
 
   function routeFrame(mario) {
@@ -42,12 +46,15 @@ function createMarioFactory(SpriteSheet) {
 
   return function createMario() {
     const Mario = new Entity();
+    Mario.audio = audioBoard;
     Mario.size.set(14, 16);
 
-    Mario.addTrait(new Walk());
     Mario.addTrait(new Jump());
-    Mario.addTrait(new Stomp());
     Mario.addTrait(new Killable());
+    Mario.addTrait(new Physics());
+    Mario.addTrait(new Solid());
+    Mario.addTrait(new Stomp());
+    Mario.addTrait(new Walk());
 
     Mario.killable.removeAfter = 0;
 

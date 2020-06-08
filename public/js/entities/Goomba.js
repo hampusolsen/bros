@@ -1,6 +1,8 @@
 import Entity, { Trait } from "../Entity.js";
 import Killable from "../traits/Killable.js";
 import PendulumMove from "../traits/PendulumMove.js";
+import Physics from "../traits/Physics.js";
+import Solid from '../traits/Solid.js';
 import { loadSpriteSheet } from "../loaders.js";
 
 export async function loadGoomba() {
@@ -49,9 +51,11 @@ function createGoombaFactory(SpriteSheet) {
 
         Goomba.size.set(16, 16);
 
-        Goomba.addTrait(new PendulumMove());
         Goomba.addTrait(new Behavior());
         Goomba.addTrait(new Killable());
+        Goomba.addTrait(new PendulumMove());
+        Goomba.addTrait(new Physics());
+        Goomba.addTrait(new Solid());
 
         Goomba.draw = drawGoomba;
 

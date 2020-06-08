@@ -1,4 +1,5 @@
 import { Vec2 } from './math.js';
+import AudioBoard from './AudioBoard.js';
 import BoundingBox from './BoundingBox.js';
 
 export const Sides = {
@@ -11,14 +12,24 @@ export const Sides = {
 export class Trait {
    constructor(name) {
       this.NAME = name;
+      this.tasks = [];
    }
 
    collides(us, them) {
 
    }
 
+   finalize() {
+      this.tasks.forEach(task => task());
+      this.tasks.length = 0;
+   }
+
    obstruct() {
 
+   }
+
+   queue(task) {
+      this.tasks.push(task);
    }
 
    update() {
@@ -30,6 +41,7 @@ export default class Entity {
    constructor() {
       this.canCollide = true;
 
+      this.audioBoard = new AudioBoard();
       this.pos = new Vec2(0, 0);
       this.vel = new Vec2(0, 0);
       this.size = new Vec2(0, 0);
@@ -54,18 +66,22 @@ export default class Entity {
 
    }
 
-   obstruct(side) {
+   finalize() {
+      this.traits.forEach(trait => trait.finalize());
+   }
+
+   obstruct(side, match) {
       this.traits.forEach(trait => {
-         trait.obstruct(this, side);
+         trait.obstruct(this, side, match);
       });
    }
 
-   update(deltaTime, level) {
+   update(gameContext, level) {
       this.traits.forEach(trait => {
-         trait.update(this, deltaTime, level);
+         trait.update(this, gameContext, level);
       });
 
-      this.lifetime += deltaTime;
+      this.lifetime += gameContext.deltaTime;
    }
 }
 

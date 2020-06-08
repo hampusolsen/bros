@@ -12,7 +12,7 @@ export default class Walk extends Trait {
       this.heading = 1;
    }
 
-   update(entity, deltaTime) {
+   update(entity, { deltaTime }) {
       const absX = Math.abs(entity.vel.x);
 
       if (this.direction !== 0) {
