@@ -11,6 +11,6 @@ export default class AudioBoard {
         const source = audioContext.createBufferSource();
         source.connect(audioContext.destination);
         source.buffer = this.buffers.get(name);
-        source.start(0);
+        source.start();
     }
 }
