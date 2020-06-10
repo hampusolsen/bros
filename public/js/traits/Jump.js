@@ -33,10 +33,10 @@ export default class Jump extends Trait {
 
    }
 
-   update(entity, { audioContext, deltaTime }) {
+   update(entity, { deltaTime }) {
       if (this.requestTime > 0) {
          if (this.ready > 0) {
-            entity.audio.playAudio('jump', audioContext);
+            entity.sounds.add('jump');
             this.engageTime = this.duration;
             this.requestTime = 0;
          }

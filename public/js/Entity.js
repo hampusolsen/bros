@@ -1,6 +1,7 @@
 import { Vec2 } from './math.js';
 import AudioBoard from './AudioBoard.js';
 import BoundingBox from './BoundingBox.js';
+import EventEmitter from './EventEmitter.js';
 
 export const Sides = {
    TOP: Symbol('top'),
@@ -13,6 +14,7 @@ export class Trait {
    constructor(name) {
       this.NAME = name;
       this.tasks = [];
+      this.events = new EventEmitter();
    }
 
    collides(us, them) {
@@ -48,7 +50,10 @@ export default class Entity {
       this.offset = new Vec2(0, 0);
       this.bounds = new BoundingBox(this.pos, this.size, this.offset);
       this.lifetime = 0;
+
+      this.sounds = new Set();
       this.traits = [];
+
    }
 
    addTrait(trait) {
@@ -76,10 +81,20 @@ export default class Entity {
       });
    }
 
+   playSounds(audioBoard, audioContext) {
+      this.sounds.forEach(name => {
+         audioBoard.playAudio(name, audioContext);
+      });
+
+      this.sounds.clear();
+   }
+
    update(gameContext, level) {
       this.traits.forEach(trait => {
          trait.update(this, gameContext, level);
       });
+
+      this.playSounds(this.audio, gameContext.audioContext);
 
       this.lifetime += gameContext.deltaTime;
    }

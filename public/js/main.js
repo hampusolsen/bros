@@ -1,10 +1,7 @@
-import AudioBoard from './AudioBoard.js';
 import Camera from './Camera.js';
-import Entity from './Entity.js';
-import PlayerController from './traits/PlayerController.js';
 import Timer from './Timer.js';
+import { createPlayerEnvironment, createPlayer } from './player.js';
 import { createLevelLoader } from './loaders/level.js';
-import { createAudioLoader } from './loaders/audio.js';
 import { setupKeyboard } from './input.js';
 import { loadEntities } from './entities.js';
 import { loadFont } from './loaders/font.js';
@@ -13,22 +10,12 @@ import { createCollisionLayer } from './layers/collision.js';
 
 const canvas = document.querySelector('#screen');
 
-function createPlayerEnvironment(entity) {
-   const playerEnvironment = new Entity();
-   const playerControl = new PlayerController();
-
-   playerControl.checkpoint.set(64, 64);
-   playerControl.setPlayer(entity);
-   playerEnvironment.addTrait(playerControl);
-
-   return playerEnvironment;
-}
 
 (async () => {
    const context = canvas.getContext('2d');
    const audioContext = new AudioContext();
    const [entityFactory, font] = await Promise.all([
-      loadEntities(),
+      loadEntities(audioContext),
       loadFont()
    ]);
 
@@ -38,7 +25,8 @@ function createPlayerEnvironment(entity) {
    const camera = new Camera();
    window.camera = camera;
 
-   const mario = entityFactory.mario();
+   const mario = createPlayer(entityFactory.mario());
+   console.log(mario);
    level.entities.add(mario);
 
    const playerEnvironment = createPlayerEnvironment(mario);
